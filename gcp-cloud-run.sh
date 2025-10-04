@@ -167,7 +167,7 @@ get_user_input() {
     # UUID
     while true; do
         read -p "Enter UUID: " UUID
-        UUID=${UUID:-"ba0e3984-ccc9-48a3-8074-b2f507f41ce8"}
+        UUID=${UUID:-"kkkkpppp-kp22-22kp-kpkp-kpchannel222"}
         if validate_uuid "$UUID"; then
             break
         fi
@@ -351,10 +351,6 @@ main() {
     
     PROJECT_ID=$(gcloud config get-value project)
     
-    log "Starting Cloud Run deployment..."
-    log "Project: $PROJECT_ID"
-    log "Region: $REGION"
-    log "Service: $SERVICE_NAME"
     
     validate_prerequisites
     
@@ -411,29 +407,47 @@ main() {
     
     # Create telegram message
     MESSAGE="━━━━━━━━━━━━━━━━━━━━
-*Cloud Run Deploy Success* ✅
-*Project:* \`${PROJECT_ID}\`
-*Service:* \`${SERVICE_NAME}\`
-*Region:* \`${REGION}\`
-*URL:* \`${SERVICE_URL}\`
+╭───────────────
+│𝐕𝟐𝐁𝐎𝐗 𝐕𝐏𝐍
+├───────────────
+├ • 𝙎𝙚𝙧𝙫𝙚𝙧 :
 
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-*Usage:* __Copy the above link and import to your V2Ray client.__
+├───────────────
+├ ◉ 𝐌𝐘𝐓𝐄𝐋 𝐁𝐘𝐏𝐀𝐒𝐒 {𝐆𝐂𝐏}
+├ ◉ {𝟓𝐡𝐫} 
+├ ◉ 𝐄𝐍𝐃 𝐓𝐈𝐌𝐄 {9:30} 
+├───────────────
+├ ◉ 𝙏𝙊 𝘽𝙐𝙔 - 𝙆𝙋
+├ ◉ 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 
+├ ◉ 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 
+├ ◉ 𝙂𝙍𝙊𝙐𝙋 
+├ ◉ 𝘽𝙤𝙩 
+╰───────────────
 ━━━━━━━━━━━━━━━━━━━━"
 
     # Create console message
     CONSOLE_MESSAGE="━━━━━━━━━━━━━━━━━━━━
-Cloud Run Deploy Success ✅
-Project: ${PROJECT_ID}
-Service: ${SERVICE_NAME}
-Region: ${REGION}
-URL: ${SERVICE_URL}
+╭───────────────
+│𝐕𝟐𝐁𝐎𝐗 𝐕𝐏𝐍
+├───────────────
+├ • 𝙎𝙚𝙧𝙫𝙚𝙧 :
 
 ${VLESS_LINK}
 
-Usage: Copy the above link and import to your V2Ray client.
+├───────────────
+├ ◉ 𝐌𝐘𝐓𝐄𝐋 𝐁𝐘𝐏𝐀𝐒𝐒 {𝐆𝐂𝐏}
+├ ◉ {𝟓𝐡𝐫} 
+├ ◉ 𝐄𝐍𝐃 𝐓𝐈𝐌𝐄 {9:30} 
+├───────────────
+├ ◉ 𝙏𝙊 𝘽𝙐𝙔 - 𝙆𝙋
+├ ◉ 𝘿𝙚𝙫𝙚𝙡𝙤𝙥𝙚𝙧 
+├ ◉ 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 
+├ ◉ 𝙂𝙍𝙊𝙐𝙋 
+├ ◉ 𝘽𝙤𝙩 
+╰───────────────
 ━━━━━━━━━━━━━━━━━━━━"
     
     # Save to file
