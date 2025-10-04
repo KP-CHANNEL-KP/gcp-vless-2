@@ -110,7 +110,7 @@ Use the following settings in your client app:
 | Protocol   | VLESS                                  |
 | Address    | `your.domain.com`                      |
 | Port       | `443` (HTTPS)                          |
-| UUID       | `kkkkpppp-kp22-22kp-kpkp-kpchannel222` |
+| UUID       | `k0k0p0p0-kp22-22kp-kpkp-kpchannel222` |
 | Encryption | none                                   |
 | Transport  | WebSocket (WS)                         |
 | WS Path    | `/KP-CHANNEL`                         |
