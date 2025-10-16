@@ -540,21 +540,21 @@ END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
     VLESS_LINK="vless://${UUID}@${HOST_DOMAIN}:443?path=%2FKP-CHANNEL&security=tls&alpn=h3%2Ch2%2Chttp%2F1.1&encryption=none&host=${DOMAIN}&fp=randomized&type=ws&sni=${DOMAIN}#${SERVICE_NAME}"
 
     # ✅ Telegram Message creation 
-MESSAGE=" *GCP VLESS Deployment Success*
-━━━━━━━━━━━━━━━━━━━━
-*• Service:* \`${SERVICE_NAME}\`
+MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
+━━━━━━━━━━━━━━━
+*• Server:* \`${SERVICE_NAME}\`
 *• Region:* \`${REGION}\`
 *• Resources:* \`${CPU} CPU | ${MEMORY} RAM\`
 *• Domain:* \`${DOMAIN}\`
 
 *• Start:* \`${START_TIME}\`
 *• End:* \`${END_TIME}\`
-━━━━━━━━━━━━━━━━━━━━
-*🔗 V2Ray Configuration Access Key*
+━━━━━━━━━━━━━━━
+*🔗 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-_Usage: Copy the above link and import to your V2Ray client_"
+_အသုံးပြုပုံ: Youtube မှာတက်ပေးထားပါတယ်🤪_"
 
 # ✅ Send to Telegram (MarkdownV2)
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -564,8 +564,8 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
   -d "disable_web_page_preview=true" \
   -d "reply_markup={\"inline_keyboard\":[[{\"text\":\"📋 COPY CODE\",\"url\":\"https://t.me/share/url?url=${VLESS_LINK}\"}]]}"
     # ✅ Console Output Message
-    CONSOLE_MESSAGE="GCP VLESS Deployment → Success ✅
-━━━━━━━━━━━━━━━━━━━━
+    CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
+━━━━━━━━━━━━━━━
 • Project: ${PROJECT_ID}
 • Service: ${SERVICE_NAME}
 • Region: ${REGION}
@@ -574,11 +574,11 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
 • Start Time (MMT): ${START_TIME}
 • End Time (MMT):   ${END_TIME}
 
-🔗 V2Ray Configuration Link:
+🔗 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
 ${VLESS_LINK}
 
-━━━━━━━━━━━━━━━━━━━━
-Usage: Copy the above link and import to your V2Ray client."
+━━━━━━━━━━━━━━━
+အသုံးပြုပုံ: Youtube မှာတက်ပေးထားပါတယ်🤪."
 
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
