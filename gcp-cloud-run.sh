@@ -542,14 +542,14 @@ END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
     # ✅ Telegram Message creation 
 MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
 ━━━━━━━━━━━━━━━
-\`\`\`Server: ${SERVICE_NAME}\`\`\`
-\`\`\`Region: ${REGION}\`\`\`
-\`\`\`Resources: ${CPU} CPU | ${MEMORY} RAM\`\`\`
-\`\`\`Domain: ${DOMAIN}\`\`\`
+\`\`\`Server ${SERVICE_NAME}\`\`\`
+\`\`\`Region ${REGION}\`\`\`
+\`\`\`Resources ${CPU} CPU | ${MEMORY} RAM\`\`\`
+\`\`\`Domain ${DOMAIN}\`\`\`
 
 \`\`\`
-Start:* ${START_TIME}
-End:* \`${END_TIME}
+Start: ${START_TIME}
+End: ${END_TIME}
 \`\`\`
 ━━━━━━━━━━━━━━━
 *💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
@@ -568,11 +568,11 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
     # ✅ Console Output Message
     CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
 ━━━━━━━━━━━━━━━
- Project: ${PROJECT_ID}
- Service: ${SERVICE_NAME}
- Region: ${REGION}
- Resources: ${CPU} CPU | ${MEMORY} RAM
- Domain: ${DOMAIN}
+ Project ${PROJECT_ID}
+ Service ${SERVICE_NAME}
+ Region ${REGION}
+ Resources ${CPU} CPU | ${MEMORY} RAM
+ Domain {DOMAIN}
  Start Time (MMT): ${START_TIME}
  End Time (MMT):   ${END_TIME}
 
