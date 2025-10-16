@@ -554,7 +554,7 @@ MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-_အသုံးပြုပုံ: Youtube မှာတက်ပေးထားပါတယ်🤪_"
+_အသုံးပြုပုံ: Youtube မှာတင်ပေးထားပါတယ်🤪_"
 
 # ✅ Send to Telegram (MarkdownV2)
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -578,7 +578,7 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
 ${VLESS_LINK}
 
 ━━━━━━━━━━━━━━━
-အသုံးပြုပုံ: Youtube မှာတက်ပေးထားပါတယ်🤪."
+အသုံးပြုပုံ: Youtube မှာတင်ပေးထားပါတယ်🤪."
 
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
