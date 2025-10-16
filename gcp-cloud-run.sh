@@ -556,7 +556,7 @@ End: ${END_TIME}
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-_အသုံးပြုပုံ: Youtube မှာတင်ပေးထားပါတယ်_"
+_အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွနိုင်သည်_"
 
 # ✅ Send to Telegram (MarkdownV2)
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -580,7 +580,7 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
 ${VLESS_LINK}
 
 ━━━━━━━━━━━━━━━
-အသုံးပြုပုံ: Youtube မှာတင်ပေးထားပါတယ်."
+အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွနိုင်သည်."
 
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
