@@ -628,7 +628,7 @@ main() {
     VLESS_LINK="vless://${UUID}@${HOST_DOMAIN}:443?path=%2Ftg-%2FKP-CHANNEL&security=tls&alpn=h3%2Ch2%2Chttp%2F1.1&encryption=none&host=${DOMAIN}&fp=randomized&type=ws&sni=${DOMAIN}#${SERVICE_NAME}"
     
     # Create beautiful telegram message with emojis
-    MESSAGE="🚀 *GCP V2Ray Deployment Successful* 🚀
+    MESSAGE="❤ *KP CHANNEL MYTEL BYPASS GCP* ❤
 ━━━━━━━━━━━━━━━━━━━━
 ✨ *Deployment Details:*
 • *Project:* \`${PROJECT_ID}\`
@@ -637,7 +637,7 @@ main() {
 • *Resources:* \`${CPU} CPU | ${MEMORY} RAM\`
 • *Domain:* \`${DOMAIN}\`
 
-🔗 *V2Ray Configuration Link:*
+🔗 *ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:*
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
@@ -649,7 +649,7 @@ ${VLESS_LINK}
 ━━━━━━━━━━━━━━━━━━━━"
 
     # Create console message
-    CONSOLE_MESSAGE="🚀 GCP V2Ray Deployment Successful 🚀
+    CONSOLE_MESSAGE="❤ KP CHANNEL MYTEL BYPASS GCP ❤
 ━━━━━━━━━━━━━━━━━━━━
 ✨ Deployment Details:
 • Project: ${PROJECT_ID}
@@ -658,7 +658,7 @@ ${VLESS_LINK}
 • Resources: ${CPU} CPU | ${MEMORY} RAM
 • Domain: ${DOMAIN}
 
-🔗 V2Ray Configuration Link:
+🔗 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
 ${VLESS_LINK}
 
 📝 Usage Instructions:
