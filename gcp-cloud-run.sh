@@ -550,6 +550,10 @@ MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
 Start: ${START_TIME}
 End: ${END_TIME}
 \`\`\`
+\`\`\`
+လိုင်းရှယ်ကောင်း
+Singapore Server
+\`\`\`
 ━━━━━━━━━━━━━━━
 *💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
 \`\`\`
@@ -579,7 +583,9 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
  Domain {DOMAIN}
  Start Time (MMT): ${START_TIME}
  End Time (MMT):   ${END_TIME}
-
+ လိုင်းရှယ်ကောင်း
+ Singapore Server
+ 
 💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
 ${VLESS_LINK}
 
