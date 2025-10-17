@@ -556,8 +556,11 @@ End: ${END_TIME}
 ${VLESS_LINK}
 \`\`\`
 _အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
-\`\`\`Telegram-Channel https://t.me/addlist/DaVvvOWfdg05NDJl\`\`\`
-\`\`\`Telegram-Acc @KPBYKP\`\`\`"
+\`\`\`Telegram-Channel\`\`\`
+https://t.me/addlist/DaVvvOWfdg05NDJl
+\`\`\`Telegram-Acc\`\`\`
+@KPBYKP
+\`\`\`🕔🕔🕔\`\`\`"
 
 # ✅ Send to Telegram (MarkdownV2)
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
@@ -582,9 +585,11 @@ ${VLESS_LINK}
 
 ━━━━━━━━━━━━━━━
 အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်.
-Telegram-Channel https://t.me/addlist/DaVvvOWfdg05NDJl
-Telegram-Acc @KPBYKP"
-
+Telegram-Channel
+https://t.me/addlist/DaVvvOWfdg05NDJl
+Telegram-Acc
+@KPBYKP
+🕔🕔🕔"
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
     log "Deployment info saved to deployment-info.txt"
