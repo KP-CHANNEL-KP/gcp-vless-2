@@ -560,55 +560,61 @@ END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
     VLESS_LINK="vless://${UUID}@${HOST_DOMAIN}:443?path=%2FKP-CHANNEL&security=tls&alpn=h3%2Ch2%2Chttp%2F1.1&encryption=none&host=${DOMAIN}&fp=randomized&type=ws&sni=${DOMAIN}#${SERVICE_NAME}"
 
     # ✅ Telegram Message creation 
-MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
+MESSAGE="
+✨ *KP CHANNEL | MYTEL BYPASS GCP* ✨
+➖➖➖➖➖➖➖➖➖➖➖➖
+🌐 *Server Configuration* 🌐
+\`\`\`
+Server Name: ${ESCAPED_SERVICE_NAME}
+Region: ${ESCAPED_REGION}
+Resources: ${CPU} CPU \| ${MEMORY} RAM
+Domain: ${ESCAPED_DOMAIN}
+\`\`\`
+⏳ *Active Duration (MMT)* ⏳
+\`\`\`
+Start Date: ${ESCAPED_START_TIME}
+End Date: ${ESCAPED_END_TIME}
+\`\`\`
 ━━━━━━━━━━━━━━━
-\`\`\`Server ${SERVICE_NAME}\`\`\`
-\`\`\`Region ${REGION}\`\`\`
-\`\`\`Resources ${CPU} CPU | ${MEMORY} RAM\`\`\`
-\`\`\`Domain ${DOMAIN}\`\`\`
-\`\`\`
-Start: ${START_TIME}
-End: ${END_TIME}
-\`\`\`
-\`\`\`
-လိုင်းရှယ်ကောင်း
-Singapore Server 🇸🇬🇸🇬🇸🇬
-\`\`\`
-━━━━━━━━━━━━━━━
-*💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
+🚀 *VLESS | Singapore Service* 🇸🇬
+_💛 ယခု Key ကို အဆင်ပြေရာ Vpn တွင် ထည့်သွင်းသုံးစွဲနိုင်ပါပြီ\._
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-_အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
-\`\`\`Telegram-Channel\`\`\`
-https://t.me/addlist/DaVvvOWfdg05NDJl
-\`\`\`Telegram-Acc\`\`\`
-@KPBYKP
-\`\`\`🕔🕔🕔\`\`\`"
+_အသုံးပြုပုံ\: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
+━━━━━━━━━━━━━━━
+📢 *Support & Channel Links*
+[Telegram Channel \(Subscribe\)](https://t\.me/addlist/DaVvvOWfdg05NDJl)
+[Telegram Admin \(Direct Message\)](https://t\.me/KPBYKP)
+_⚡️ Enjoy the fast connection\!_
+"
 
     # ✅ Console Output Message
-    CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
-━━━━━━━━━━━━━━━
- Project ${PROJECT_ID}
- Service ${SERVICE_NAME}
- Region ${REGION}
- Resources ${CPU} CPU | ${MEMORY} RAM
- Domain ${DOMAIN}
- Start Time (MMT): ${START_TIME}
- End Time (MMT):   ${END_TIME}
- လိုင်းရှယ်ကောင်း
- Singapore Server 🇸🇬🇸🇬🇸🇬
- 
-💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
-${VLESS_LINK}
+    CONSOLE_MESSAGE="
+${BLUE}====================================================${NC}
+✨ ${GREEN}KP CHANNEL | MYTEL BYPASS GCP${NC} ✅
+${BLUE}====================================================${NC}
+🌐 Server Configuration
+  * Project ID:    ${PROJECT_ID}
+  * Service Name:  ${SERVICE_NAME}
+  * Region:        ${REGION}
+  * Resources:     ${CPU} CPU | ${MEMORY} RAM
+  * Domain:        ${DOMAIN}
+  
+⏳ Active Duration (MMT)
+  * Start Date:    ${START_TIME}
+  * End Date:      ${END_TIME}
+  
+🚀 VLESS Link (Singapore Server 🇸🇬)
+  * ${VLESS_LINK}
 
-━━━━━━━━━━━━━━━
-အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်.
-Telegram-Channel
-https://t.me/addlist/DaVvvOWfdg05NDJl
-Telegram-Acc
-@KPBYKP
-🕔🕔🕔"
+----------------------------------------------------
+📌 အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်\.
+📢 Support & Channel Links
+  * Telegram Channel: https://t.me/addlist/DaVvvOWfdg05NDJl
+  * Telegram Admin:   @KPBYKP
+${BLUE}====================================================${NC}
+"
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
     log "Deployment info saved to deployment-info.txt"
