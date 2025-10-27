@@ -586,8 +586,8 @@ _အသုံးပြုပုံ\: Internet သုံးဆွဲ၍မရသ�
 📢 *Support & Channel Links*
 [Telegram Channel \(Subscribe\)](https://t\.me/addlist/DaVvvOWfdg05NDJl)
 [Telegram Admin \(Direct Message\)](https://t\.me/KPBYKP)
-_⚡️ Enjoy the fast connection\!_
-"
+_⚡️ Enjoy the fast connection\!_"
+
 
     # ✅ Console Output Message
     CONSOLE_MESSAGE="
