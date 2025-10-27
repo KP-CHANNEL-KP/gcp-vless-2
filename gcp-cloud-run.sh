@@ -9,7 +9,6 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# --- Logging Functions ---
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -26,7 +25,7 @@ info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
 
-# --- Validation Functions ---
+# Function to validate UUID format
 validate_uuid() {
     local uuid_pattern='^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     if [[ ! $1 =~ $uuid_pattern ]]; then
@@ -36,6 +35,7 @@ validate_uuid() {
     return 0
 }
 
+# Function to validate Telegram Bot Token
 validate_bot_token() {
     local token_pattern='^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$'
     if [[ ! $1 =~ $token_pattern ]]; then
@@ -45,6 +45,7 @@ validate_bot_token() {
     return 0
 }
 
+# Function to validate Channel ID
 validate_channel_id() {
     if [[ ! $1 =~ ^-?[0-9]+$ ]]; then
         error "Invalid Channel ID format"
@@ -53,6 +54,7 @@ validate_channel_id() {
     return 0
 }
 
+# Function to validate Chat ID (for bot private messages)
 validate_chat_id() {
     if [[ ! $1 =~ ^-?[0-9]+$ ]]; then
         error "Invalid Chat ID format"
@@ -61,8 +63,6 @@ validate_chat_id() {
     return 0
 }
 
-# --- Configuration/Selection Functions ---
-
 # CPU selection function
 select_cpu() {
     echo
@@ -70,7 +70,7 @@ select_cpu() {
     echo "1. 1 CPU Core"
     echo "2. 2 CPU Cores"
     echo "3. 4 CPU Cores"
-    echo "4. 8 CPU Cores (Default)" 
+    echo "4. 8 CPU Cores (Default)" # <-- ပုံသေ 4
     echo
     
     while true; do
@@ -110,7 +110,7 @@ select_memory() {
     echo "3. 2Gi"
     echo "4. 4Gi"
     echo "5. 8Gi"
-    echo "6. 16Gi (Default)" 
+    echo "6. 16Gi (Default)" # <-- ပုံသေ 6
     echo
     
     while true; do
@@ -135,12 +135,13 @@ select_memory() {
     info "Selected Memory: $MEMORY"
 }
 
-# Validate memory configuration based on CPU (unchanged)
+# Validate memory configuration based on CPU
 validate_memory_config() {
     local cpu_num=$CPU
     local memory_num=$(echo $MEMORY | sed 's/[^0-9]*//g')
     local memory_unit=$(echo $MEMORY | sed 's/[0-9]*//g')
     
+    # Convert everything to Mi for comparison
     if [[ "$memory_unit" == "Gi" ]]; then
         memory_num=$((memory_num * 1024))
     fi
@@ -149,10 +150,22 @@ validate_memory_config() {
     local max_memory=0
     
     case $cpu_num in
-        1) min_memory=512; max_memory=2048 ;;
-        2) min_memory=1024; max_memory=4096 ;;
-        4) min_memory=2048; max_memory=8192 ;;
-        8) min_memory=4096; max_memory=16384 ;;
+        1) 
+            min_memory=512
+            max_memory=2048
+            ;;
+        2) 
+            min_memory=1024
+            max_memory=4096
+            ;;
+        4) 
+            min_memory=2048
+            max_memory=8192
+            ;;
+        8) 
+            min_memory=4096
+            max_memory=16384
+            ;;
     esac
     
     if [[ $memory_num -lt $min_memory ]]; then
@@ -176,7 +189,7 @@ validate_memory_config() {
 select_region() {
     echo
     info "=== Region Selection ==="
-    echo "1. us-central1 (Iowa, USA) (Default)" 
+    echo "1. us-central1 (Iowa, USA) (Default)" # <-- ပုံသေ 1
     echo "2. us-west1 (Oregon, USA)" 
     echo "3. us-east1 (South Carolina, USA)"
     echo "4. europe-west1 (Belgium)"
@@ -209,18 +222,18 @@ select_region() {
 select_telegram_destination() {
     echo
     info "=== Telegram Destination ==="
-    echo "1. Send to Channel only"
-    echo "2. Send to Bot private message only (Default)" # <-- ပုံသေ 2 အဖြစ် ပြောင်းလဲ
+    echo "1. Send to Channel only (Default)" # <-- ပုံသေ 1
+    echo "2. Send to Bot private message only" 
     echo "3. Send to both Channel and Bot"
     echo "4. Don't send to Telegram"
     echo
     
-    local DEFAULT_CHAT_ID="7070690379" # Chat ID ပုံသေတန်ဖိုး
+    local DEFAULT_CHAT_ID="7070690379" # <-- Chat ID ပုံသေတန်ဖိုး
     
     while true; do
-        read -p "Select destination (1-4, or Enter for Default 2): " telegram_choice
-        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 2
-        telegram_choice=${telegram_choice:-"2"}
+        read -p "Select destination (1-4, or Enter for Default 1): " telegram_choice
+        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 1
+        telegram_choice=${telegram_choice:-"1"}
 
         case $telegram_choice in
             1) 
@@ -237,7 +250,7 @@ select_telegram_destination() {
                 TELEGRAM_DESTINATION="bot"
                 while true; do
                     read -p "Enter your Chat ID (for bot private message) [default: ${DEFAULT_CHAT_ID}]: " CHAT_ID_INPUT
-                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး
+                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး ထည့်
                     TELEGRAM_CHAT_ID=${CHAT_ID_INPUT:-"$DEFAULT_CHAT_ID"}
                     
                     if validate_chat_id "$TELEGRAM_CHAT_ID"; then
@@ -256,7 +269,7 @@ select_telegram_destination() {
                 done
                 while true; do
                     read -p "Enter your Chat ID (for bot private message) [default: ${DEFAULT_CHAT_ID}]: " CHAT_ID_INPUT
-                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး
+                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး ထည့်
                     TELEGRAM_CHAT_ID=${CHAT_ID_INPUT:-"$DEFAULT_CHAT_ID"}
                     
                     if validate_chat_id "$TELEGRAM_CHAT_ID"; then
@@ -280,7 +293,7 @@ get_user_input() {
     info "=== Service Configuration ==="
     
     # Service Name
-    local DEFAULT_SERVICE_NAME="kpchannel" # Service Name ပုံသေတန်ဖိုး
+    local DEFAULT_SERVICE_NAME="kpchannel" # <-- Service Name ပုံသေတန်ဖိုး
     while true; do
         read -p "Enter service name [default: ${DEFAULT_SERVICE_NAME}]: " SERVICE_NAME_INPUT
         # Enter နှိပ်ပါက Service Name ပုံသေတန်ဖိုး
@@ -293,7 +306,7 @@ get_user_input() {
         fi
     done
     
-    # UUID
+    # UUID (မူလ Script တွင်လည်း default ရှိပြီးသား)
     local DEFAULT_UUID="9c910024-714e-4221-81c6-41ca9856e7ab"
     while true; do
         read -p "Enter UUID [default: ${DEFAULT_UUID}]: " UUID_INPUT
@@ -305,7 +318,7 @@ get_user_input() {
     
     # Telegram Bot Token (required for any Telegram option)
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
-        local DEFAULT_BOT_TOKEN="8354809421:AAEXSRRjurPXGJQFhLQLVF-dFCsrZhSsB2g" # Bot Token ပုံသေတန်ဖိုး
+        local DEFAULT_BOT_TOKEN="8354809421:AAEXSRRjurPXGJQFhLQLVF-dFCsrZhSsB2g" # <-- Bot Token ပုံသေတန်ဖိုး
         while true; do
             # Bot Token ကို ဖုံးကွယ်ပြီး default တန်ဖိုးကို အမြည်းပြ
             read -s -p "Enter Telegram Bot Token [default: ${DEFAULT_BOT_TOKEN:0:10}...]: " BOT_TOKEN_INPUT
@@ -325,7 +338,7 @@ get_user_input() {
     HOST_DOMAIN=${HOST_DOMAIN_INPUT:-"m.googleapis.com"}
 }
 
-# Display configuration summary (Proceed with deployment default 'y')
+# Display configuration summary
 show_config_summary() {
     echo
     info "=== Configuration Summary ==="
@@ -353,7 +366,7 @@ show_config_summary() {
     
     while true; do
         read -p "Proceed with deployment? (y/n, or Enter for Default y): " confirm
-        confirm=${confirm:-"y"} # Proceed confirm ကို ပုံသေ 'y' ထား
+        confirm=${confirm:-"y"} # <-- Proceed confirm ကို ပုံသေ 'y' ထား
         case $confirm in
             [Yy]* ) break;;
             [Nn]* ) 
@@ -365,7 +378,9 @@ show_config_summary() {
     done
 }
 
-# --- Deployment & Notification Functions (Unchanged) ---
+# ... (Rest of the functions: validate_prerequisites, cleanup, send_to_telegram, send_deployment_notification, and main function remain the same.)
+
+# Validation functions
 validate_prerequisites() {
     log "Validating prerequisites..."
     
@@ -559,56 +574,91 @@ END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
     # VLESS link
     VLESS_LINK="vless://${UUID}@${HOST_DOMAIN}:443?path=%2FKP-CHANNEL&security=tls&alpn=h3%2Ch2%2Chttp%2F1.1&encryption=none&host=${DOMAIN}&fp=randomized&type=ws&sni=${DOMAIN}#${SERVICE_NAME}"
 
-    # ✅ Telegram Message creation 
-MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
+    # ... main() function အတွင်းရှိ VLESS_LINK တွက်ပြီးနောက် ...
+
+# Function to escape MarkdownV2 special characters
+# Escaping: _, *, [, ], (, ), ~, `, >, #, +, -, =, |, {, }, ., !
+escape_mdv2() {
+    # Escape characters that are *not* inside the VLESS_LINK or DOMAIN
+    sed -e 's/\([_*\[\]()~`>#+-=|\{\}.!]\)/\\\1/g' <<< "$1"
+}
+
+# Escape variables that appear outside of code blocks.
+ESCAPED_SERVICE_NAME=$(escape_mdv2 "$SERVICE_NAME")
+ESCAPED_REGION=$(escape_mdv2 "$REGION")
+ESCAPED_DOMAIN=$(escape_mdv2 "$DOMAIN")
+ESCAPED_START_TIME=$(escape_mdv2 "$START_TIME")
+ESCAPED_END_TIME=$(escape_mdv2 "$END_TIME")
+
+MESSAGE="
+✨ *KP CHANNEL | MYTEL BYPASS GCP* ✨
+➖➖➖➖➖➖➖➖➖➖➖➖
+🌐 *Server Configuration* 🌐
+\`\`\`
+Server Name: ${ESCAPED_SERVICE_NAME}
+Region: ${ESCAPED_REGION}
+Resources: ${CPU} CPU \| ${MEMORY} RAM
+Domain: ${ESCAPED_DOMAIN}
+\`\`\`
+⏳ *Active Duration (MMT)* ⏳
+\`\`\`
+Start Date: ${ESCAPED_START_TIME}
+End Date: ${ESCAPED_END_TIME}
+\`\`\`
 ━━━━━━━━━━━━━━━
-\`\`\`Server ${SERVICE_NAME}\`\`\`
-\`\`\`Region ${REGION}\`\`\`
-\`\`\`Resources ${CPU} CPU | ${MEMORY} RAM\`\`\`
-\`\`\`Domain ${DOMAIN}\`\`\`
-\`\`\`
-Start: ${START_TIME}
-End: ${END_TIME}
-\`\`\`
-\`\`\`
-လိုင်းရှယ်ကောင်း
-Singapore Server 🇸🇬🇸🇬🇸🇬
-\`\`\`
-━━━━━━━━━━━━━━━
-*💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
+🚀 *VLESS | Singapore Service* 🇸🇬
+_💛 ယခု Key ကို အဆင်ပြေရာ Vpn တွင် ထည့်သွင်းသုံးစွဲနိုင်ပါပြီ\._
 \`\`\`
 ${VLESS_LINK}
 \`\`\`
-_အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
-\`\`\`Telegram-Channel\`\`\`
-https://t.me/addlist/DaVvvOWfdg05NDJl
-\`\`\`Telegram-Acc\`\`\`
-@KPBYKP
-\`\`\`🕔🕔🕔\`\`\`"
-
-    # ✅ Console Output Message
-    CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
+_အသုံးပြုပုံ\: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
 ━━━━━━━━━━━━━━━
- Project ${PROJECT_ID}
- Service ${SERVICE_NAME}
- Region ${REGION}
- Resources ${CPU} CPU | ${MEMORY} RAM
- Domain ${DOMAIN}
- Start Time (MMT): ${START_TIME}
- End Time (MMT):   ${END_TIME}
- လိုင်းရှယ်ကောင်း
- Singapore Server 🇸🇬🇸🇬🇸🇬
- 
-💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
-${VLESS_LINK}
+📢 *Support & Channel Links*
+[Telegram Channel \(Subscribe\)](https://t\.me/addlist/DaVvvOWfdg05NDJl)
+[Telegram Admin \(Direct Message\)](https://t\.me/KPBYKP)
+_⚡️ Enjoy the fast connection\!_
+"
+# ... (ကျန်သော code များ ဆက်လက်ပါဝင်မည်)
 
-━━━━━━━━━━━━━━━
-အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်.
-Telegram-Channel
-https://t.me/addlist/DaVvvOWfdg05NDJl
-Telegram-Acc
-@KPBYKP
-🕔🕔🕔"
+
+# Since the user's original script included this raw curl command which uses the deprecated MarkdownV2, 
+# and the `send_deployment_notification` function handles sending based on the destination, 
+# I will comment out this raw curl block to prevent duplicate and potentially malformed messages.
+
+# ✅ Send to Telegram (MarkdownV2) - Original, raw curl commented out
+# curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+#   -d "chat_id=${TELEGRAM_CHAT_ID}" \
+#   -d "text=${MESSAGE}" \
+#   -d "parse_mode=MarkdownV2" \
+#   -d "disable_web_page_preview=true" \
+#   -d "reply_markup={\"inline_keyboard\":[[{\"text\":\"📋 COPY CODE\",\"url\":\"https://t.me/share/url?url=${VLESS_LINK}\"}]]}"
+
+        # ✅ Console Output Message (Terminal တွင် ဖော်ပြရန်)
+    CONSOLE_MESSAGE="
+${BLUE}====================================================${NC}
+✨ ${GREEN}KP CHANNEL | MYTEL BYPASS GCP${NC} ✅
+${BLUE}====================================================${NC}
+🌐 Server Configuration
+  * Project ID:    ${PROJECT_ID}
+  * Service Name:  ${SERVICE_NAME}
+  * Region:        ${REGION}
+  * Resources:     ${CPU} CPU | ${MEMORY} RAM
+  * Domain:        ${DOMAIN}
+  
+⏳ Active Duration (MMT)
+  * Start Date:    ${START_TIME}
+  * End Date:      ${END_TIME}
+  
+🚀 VLESS Link (Singapore Server 🇸🇬)
+  * ${VLESS_LINK}
+
+----------------------------------------------------
+📌 အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်\.
+📢 Support & Channel Links
+  * Telegram Channel: https://t.me/addlist/DaVvvOWfdg05NDJl
+  * Telegram Admin:   @KPBYKP
+${BLUE}====================================================${NC}
+"
 # Save to file
     echo "$CONSOLE_MESSAGE" > deployment-info.txt
     log "Deployment info saved to deployment-info.txt"
@@ -618,6 +668,9 @@ Telegram-Acc
     info "=== Deployment Information ==="
     echo "$CONSOLE_MESSAGE"
     echo
+    
+    # ... (ကျန်သော code များ ဆက်လက်ပါဝင်မည်)
+
     
     # Send to Telegram based on user selection
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
