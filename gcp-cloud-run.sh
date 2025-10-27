@@ -9,6 +9,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# --- Logging Functions ---
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -25,7 +26,7 @@ info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
 
-# Function to validate UUID format
+# --- Validation Functions ---
 validate_uuid() {
     local uuid_pattern='^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
     if [[ ! $1 =~ $uuid_pattern ]]; then
@@ -35,7 +36,6 @@ validate_uuid() {
     return 0
 }
 
-# Function to validate Telegram Bot Token
 validate_bot_token() {
     local token_pattern='^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$'
     if [[ ! $1 =~ $token_pattern ]]; then
@@ -45,7 +45,6 @@ validate_bot_token() {
     return 0
 }
 
-# Function to validate Channel ID
 validate_channel_id() {
     if [[ ! $1 =~ ^-?[0-9]+$ ]]; then
         error "Invalid Channel ID format"
@@ -54,7 +53,6 @@ validate_channel_id() {
     return 0
 }
 
-# Function to validate Chat ID (for bot private messages)
 validate_chat_id() {
     if [[ ! $1 =~ ^-?[0-9]+$ ]]; then
         error "Invalid Chat ID format"
@@ -63,18 +61,23 @@ validate_chat_id() {
     return 0
 }
 
+# --- Configuration/Selection Functions ---
+
 # CPU selection function
 select_cpu() {
     echo
     info "=== CPU Configuration ==="
-    echo "1. 1 CPU Core (Default)"
+    echo "1. 1 CPU Core"
     echo "2. 2 CPU Cores"
     echo "3. 4 CPU Cores"
-    echo "4. 8 CPU Cores"
+    echo "4. 8 CPU Cores (Default)" 
     echo
     
     while true; do
-        read -p "Select CPU cores (1-4): " cpu_choice
+        read -p "Select CPU cores (1-4, or Enter for Default 4): " cpu_choice
+        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 4
+        cpu_choice=${cpu_choice:-"4"}
+        
         case $cpu_choice in
             1) CPU="1"; break ;;
             2) CPU="2"; break ;;
@@ -107,11 +110,14 @@ select_memory() {
     echo "3. 2Gi"
     echo "4. 4Gi"
     echo "5. 8Gi"
-    echo "6. 16Gi"
+    echo "6. 16Gi (Default)" 
     echo
     
     while true; do
-        read -p "Select memory (1-6): " memory_choice
+        read -p "Select memory (1-6, or Enter for Default 6): " memory_choice
+        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 6
+        memory_choice=${memory_choice:-"6"}
+        
         case $memory_choice in
             1) MEMORY="512Mi"; break ;;
             2) MEMORY="1Gi"; break ;;
@@ -129,13 +135,12 @@ select_memory() {
     info "Selected Memory: $MEMORY"
 }
 
-# Validate memory configuration based on CPU
+# Validate memory configuration based on CPU (unchanged)
 validate_memory_config() {
     local cpu_num=$CPU
     local memory_num=$(echo $MEMORY | sed 's/[^0-9]*//g')
     local memory_unit=$(echo $MEMORY | sed 's/[0-9]*//g')
     
-    # Convert everything to Mi for comparison
     if [[ "$memory_unit" == "Gi" ]]; then
         memory_num=$((memory_num * 1024))
     fi
@@ -144,22 +149,10 @@ validate_memory_config() {
     local max_memory=0
     
     case $cpu_num in
-        1) 
-            min_memory=512
-            max_memory=2048
-            ;;
-        2) 
-            min_memory=1024
-            max_memory=4096
-            ;;
-        4) 
-            min_memory=2048
-            max_memory=8192
-            ;;
-        8) 
-            min_memory=4096
-            max_memory=16384
-            ;;
+        1) min_memory=512; max_memory=2048 ;;
+        2) min_memory=1024; max_memory=4096 ;;
+        4) min_memory=2048; max_memory=8192 ;;
+        8) min_memory=4096; max_memory=16384 ;;
     esac
     
     if [[ $memory_num -lt $min_memory ]]; then
@@ -183,7 +176,7 @@ validate_memory_config() {
 select_region() {
     echo
     info "=== Region Selection ==="
-    echo "1. us-central1 (Iowa, USA)"
+    echo "1. us-central1 (Iowa, USA) (Default)" 
     echo "2. us-west1 (Oregon, USA)" 
     echo "3. us-east1 (South Carolina, USA)"
     echo "4. europe-west1 (Belgium)"
@@ -193,7 +186,10 @@ select_region() {
     echo
     
     while true; do
-        read -p "Select region (1-7): " region_choice
+        read -p "Select region (1-7, or Enter for Default 1): " region_choice
+        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 1
+        region_choice=${region_choice:-"1"}
+        
         case $region_choice in
             1) REGION="us-central1"; break ;;
             2) REGION="us-west1"; break ;;
@@ -214,13 +210,18 @@ select_telegram_destination() {
     echo
     info "=== Telegram Destination ==="
     echo "1. Send to Channel only"
-    echo "2. Send to Bot private message only" 
+    echo "2. Send to Bot private message only (Default)" # <-- ပုံသေ 2 အဖြစ် ပြောင်းလဲ
     echo "3. Send to both Channel and Bot"
     echo "4. Don't send to Telegram"
     echo
     
+    local DEFAULT_CHAT_ID="7070690379" # Chat ID ပုံသေတန်ဖိုး
+    
     while true; do
-        read -p "Select destination (1-4): " telegram_choice
+        read -p "Select destination (1-4, or Enter for Default 2): " telegram_choice
+        # Enter နှိပ်ပါက ပုံသေတန်ဖိုး 2
+        telegram_choice=${telegram_choice:-"2"}
+
         case $telegram_choice in
             1) 
                 TELEGRAM_DESTINATION="channel"
@@ -235,7 +236,10 @@ select_telegram_destination() {
             2) 
                 TELEGRAM_DESTINATION="bot"
                 while true; do
-                    read -p "Enter your Chat ID (for bot private message): " TELEGRAM_CHAT_ID
+                    read -p "Enter your Chat ID (for bot private message) [default: ${DEFAULT_CHAT_ID}]: " CHAT_ID_INPUT
+                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး
+                    TELEGRAM_CHAT_ID=${CHAT_ID_INPUT:-"$DEFAULT_CHAT_ID"}
+                    
                     if validate_chat_id "$TELEGRAM_CHAT_ID"; then
                         break
                     fi
@@ -251,7 +255,10 @@ select_telegram_destination() {
                     fi
                 done
                 while true; do
-                    read -p "Enter your Chat ID (for bot private message): " TELEGRAM_CHAT_ID
+                    read -p "Enter your Chat ID (for bot private message) [default: ${DEFAULT_CHAT_ID}]: " CHAT_ID_INPUT
+                    # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး
+                    TELEGRAM_CHAT_ID=${CHAT_ID_INPUT:-"$DEFAULT_CHAT_ID"}
+                    
                     if validate_chat_id "$TELEGRAM_CHAT_ID"; then
                         break
                     fi
@@ -273,8 +280,12 @@ get_user_input() {
     info "=== Service Configuration ==="
     
     # Service Name
+    local DEFAULT_SERVICE_NAME="kpchannel" # Service Name ပုံသေတန်ဖိုး
     while true; do
-        read -p "Enter service name: " SERVICE_NAME
+        read -p "Enter service name [default: ${DEFAULT_SERVICE_NAME}]: " SERVICE_NAME_INPUT
+        # Enter နှိပ်ပါက Service Name ပုံသေတန်ဖိုး
+        SERVICE_NAME=${SERVICE_NAME_INPUT:-"$DEFAULT_SERVICE_NAME"}
+        
         if [[ -n "$SERVICE_NAME" ]]; then
             break
         else
@@ -283,9 +294,10 @@ get_user_input() {
     done
     
     # UUID
+    local DEFAULT_UUID="9c910024-714e-4221-81c6-41ca9856e7ab"
     while true; do
-        read -p "Enter UUID: " UUID
-        UUID=${UUID:-"9c910024-714e-4221-81c6-41ca9856e7ab"}
+        read -p "Enter UUID [default: ${DEFAULT_UUID}]: " UUID_INPUT
+        UUID=${UUID_INPUT:-"$DEFAULT_UUID"}
         if validate_uuid "$UUID"; then
             break
         fi
@@ -293,8 +305,15 @@ get_user_input() {
     
     # Telegram Bot Token (required for any Telegram option)
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
+        local DEFAULT_BOT_TOKEN="8354809421:AAEXSRRjurPXGJQFhLQLVF-dFCsrZhSsB2g" # Bot Token ပုံသေတန်ဖိုး
         while true; do
-            read -p "Enter Telegram Bot Token: " TELEGRAM_BOT_TOKEN
+            # Bot Token ကို ဖုံးကွယ်ပြီး default တန်ဖိုးကို အမြည်းပြ
+            read -s -p "Enter Telegram Bot Token [default: ${DEFAULT_BOT_TOKEN:0:10}...]: " BOT_TOKEN_INPUT
+            echo # Newline after silent read
+
+            # Enter နှိပ်ပါက Bot Token ပုံသေတန်ဖိုး
+            TELEGRAM_BOT_TOKEN=${BOT_TOKEN_INPUT:-"$DEFAULT_BOT_TOKEN"}
+
             if validate_bot_token "$TELEGRAM_BOT_TOKEN"; then
                 break
             fi
@@ -302,11 +321,11 @@ get_user_input() {
     fi
     
     # Host Domain (optional)
-    read -p "Enter host domain [default: m.googleapis.com]: " HOST_DOMAIN
-    HOST_DOMAIN=${HOST_DOMAIN:-"m.googleapis.com"}
+    read -p "Enter host domain [default: m.googleapis.com]: " HOST_DOMAIN_INPUT
+    HOST_DOMAIN=${HOST_DOMAIN_INPUT:-"m.googleapis.com"}
 }
 
-# Display configuration summary
+# Display configuration summary (Proceed with deployment default 'y')
 show_config_summary() {
     echo
     info "=== Configuration Summary ==="
@@ -333,7 +352,8 @@ show_config_summary() {
     echo
     
     while true; do
-        read -p "Proceed with deployment? (y/n): " confirm
+        read -p "Proceed with deployment? (y/n, or Enter for Default y): " confirm
+        confirm=${confirm:-"y"} # Proceed confirm ကို ပုံသေ 'y' ထား
         case $confirm in
             [Yy]* ) break;;
             [Nn]* ) 
@@ -345,7 +365,7 @@ show_config_summary() {
     done
 }
 
-# Validation functions
+# --- Deployment & Notification Functions (Unchanged) ---
 validate_prerequisites() {
     log "Validating prerequisites..."
     
@@ -566,13 +586,6 @@ https://t.me/addlist/DaVvvOWfdg05NDJl
 @KPBYKP
 \`\`\`🕔🕔🕔\`\`\`"
 
-# ✅ Send to Telegram (MarkdownV2)
-curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-  -d "chat_id=${TELEGRAM_CHAT_ID}" \
-  -d "text=${MESSAGE}" \
-  -d "parse_mode=MarkdownV2" \
-  -d "disable_web_page_preview=true" \
-  -d "reply_markup={\"inline_keyboard\":[[{\"text\":\"📋 COPY CODE\",\"url\":\"https://t.me/share/url?url=${VLESS_LINK}\"}]]}"
     # ✅ Console Output Message
     CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
 ━━━━━━━━━━━━━━━
@@ -580,7 +593,7 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" 
  Service ${SERVICE_NAME}
  Region ${REGION}
  Resources ${CPU} CPU | ${MEMORY} RAM
- Domain {DOMAIN}
+ Domain ${DOMAIN}
  Start Time (MMT): ${START_TIME}
  End Time (MMT):   ${END_TIME}
  လိုင်းရှယ်ကောင်း
