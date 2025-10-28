@@ -210,14 +210,12 @@ select_telegram_destination() {
     echo
     info "=== Telegram Destination ==="
     echo "1. Send to Channel only"
-    echo "2. Send to Bot private message only (Default)" 
+    echo "2. Send to Bot private message only (Default)" # <-- ပုံသေ 2 အဖြစ် ပြောင်းလဲ
     echo "3. Send to both Channel and Bot"
     echo "4. Don't send to Telegram"
     echo
     
-    # 📌 ပြင်ဆင်ထားသော ပုံသေ Channel ID နှင့် Chat ID
-    local DEFAULT_CHANNEL_ID="-1002976467818" # Channel ID ပုံသေတန်ဖိုး အသစ်
-    local DEFAULT_CHAT_ID="7070690379"    # Chat ID ပုံသေတန်ဖိုး
+    local DEFAULT_CHAT_ID="7070690379" # Chat ID ပုံသေတန်ဖိုး
     
     while true; do
         read -p "Select destination (1-4, or Enter for Default 2): " telegram_choice
@@ -228,10 +226,7 @@ select_telegram_destination() {
             1) 
                 TELEGRAM_DESTINATION="channel"
                 while true; do
-                    # Channel ID ကို ပုံသေတန်ဖိုးဖြင့် မေးခြင်း
-                    read -p "Enter Telegram Channel ID [default: ${DEFAULT_CHANNEL_ID}]: " CHANNEL_ID_INPUT
-                    TELEGRAM_CHANNEL_ID=${CHANNEL_ID_INPUT:-"$DEFAULT_CHANNEL_ID"}
-
+                    read -p "Enter Telegram Channel ID: " TELEGRAM_CHANNEL_ID
                     if validate_channel_id "$TELEGRAM_CHANNEL_ID"; then
                         break
                     fi
@@ -254,16 +249,12 @@ select_telegram_destination() {
             3) 
                 TELEGRAM_DESTINATION="both"
                 while true; do
-                    # Channel ID ကို ပုံသေတန်ဖိုးဖြင့် မေးခြင်း
-                    read -p "Enter Telegram Channel ID [default: ${DEFAULT_CHANNEL_ID}]: " CHANNEL_ID_INPUT
-                    TELEGRAM_CHANNEL_ID=${CHANNEL_ID_INPUT:-"$DEFAULT_CHANNEL_ID"}
-
+                    read -p "Enter Telegram Channel ID: " TELEGRAM_CHANNEL_ID
                     if validate_channel_id "$TELEGRAM_CHANNEL_ID"; then
                         break
                     fi
                 done
                 while true; do
-                    # Chat ID ကို ပုံသေတန်ဖိုးဖြင့် မေးခြင်း
                     read -p "Enter your Chat ID (for bot private message) [default: ${DEFAULT_CHAT_ID}]: " CHAT_ID_INPUT
                     # Enter နှိပ်ပါက Chat ID ပုံသေတန်ဖိုး
                     TELEGRAM_CHAT_ID=${CHAT_ID_INPUT:-"$DEFAULT_CHAT_ID"}
@@ -356,4 +347,291 @@ show_config_summary() {
             echo "Chat ID:       $TELEGRAM_CHAT_ID"
         fi
     else
-        echo "Telegram:
+        echo "Telegram:      Not configured"
+    fi
+    echo
+    
+    while true; do
+        read -p "Proceed with deployment? (y/n, or Enter for Default y): " confirm
+        confirm=${confirm:-"y"} # Proceed confirm ကို ပုံသေ 'y' ထား
+        case $confirm in
+            [Yy]* ) break;;
+            [Nn]* ) 
+                info "Deployment cancelled by user"
+                exit 0
+                ;;
+            * ) echo "Please answer yes (y) or no (n).";;
+        esac
+    done
+}
+
+# --- Deployment & Notification Functions (Unchanged) ---
+validate_prerequisites() {
+    log "Validating prerequisites..."
+    
+    if ! command -v gcloud &> /dev/null; then
+        error "gcloud CLI is not installed. Please install Google Cloud SDK."
+        exit 1
+    fi
+    
+    if ! command -v git &> /dev/null; then
+        error "git is not installed. Please install git."
+        exit 1
+    fi
+    
+    local PROJECT_ID=$(gcloud config get-value project)
+    if [[ -z "$PROJECT_ID" || "$PROJECT_ID" == "(unset)" ]]; then
+        error "No project configured. Run: gcloud config set project PROJECT_ID"
+        exit 1
+    fi
+}
+
+cleanup() {
+    log "Cleaning up temporary files..."
+    if [[ -d "gcp-vless-2" ]]; then
+        rm -rf gcp-vless-2
+    fi
+}
+
+send_to_telegram() {
+    local chat_id="$1"
+    local message="$2"
+    local response
+    
+    response=$(curl -s -w "%{http_code}" -X POST \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"chat_id\": \"${chat_id}\",
+            \"text\": \"$message\",
+            \"parse_mode\": \"MARKDOWN\",
+            \"disable_web_page_preview\": true
+        }" \
+        https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage)
+    
+    local http_code="${response: -3}"
+    local content="${response%???}"
+    
+    if [[ "$http_code" == "200" ]]; then
+        return 0
+    else
+        error "Failed to send to Telegram (HTTP $http_code): $content"
+        return 1
+    fi
+}
+
+send_deployment_notification() {
+    local message="$1"
+    local success_count=0
+    
+    case $TELEGRAM_DESTINATION in
+        "channel")
+            log "Sending to Telegram Channel..."
+            if send_to_telegram "$TELEGRAM_CHANNEL_ID" "$message"; then
+                log "✅ Successfully sent to Telegram Channel"
+                success_count=$((success_count + 1))
+            else
+                error "❌ Failed to send to Telegram Channel"
+            fi
+            ;;
+            
+        "bot")
+            log "Sending to Bot private message..."
+            if send_to_telegram "$TELEGRAM_CHAT_ID" "$message"; then
+                log "✅ Successfully sent to Bot private message"
+                success_count=$((success_count + 1))
+            else
+                error "❌ Failed to send to Bot private message"
+            fi
+            ;;
+            
+        "both")
+            log "Sending to both Channel and Bot..."
+            
+            # Send to Channel
+            if send_to_telegram "$TELEGRAM_CHANNEL_ID" "$message"; then
+                log "✅ Successfully sent to Telegram Channel"
+                success_count=$((success_count + 1))
+            else
+                error "❌ Failed to send to Telegram Channel"
+            fi
+            
+            # Send to Bot
+            if send_to_telegram "$TELEGRAM_CHAT_ID" "$message"; then
+                log "✅ Successfully sent to Bot private message"
+                success_count=$((success_count + 1))
+            else
+                error "❌ Failed to send to Bot private message"
+            fi
+            ;;
+            
+        "none")
+            log "Skipping Telegram notification as configured"
+            return 0
+            ;;
+    esac
+    
+    # Check if at least one message was successful
+    if [[ $success_count -gt 0 ]]; then
+        log "Telegram notification completed ($success_count successful)"
+        return 0
+    else
+        warn "All Telegram notifications failed, but deployment was successful"
+        return 1
+    fi
+}
+
+main() {
+    info "=== GCP Cloud Run V2Ray Deployment ==="
+    
+    # Get user input
+    select_region
+    select_cpu
+    select_memory
+    select_telegram_destination
+    get_user_input
+    show_config_summary
+    
+    PROJECT_ID=$(gcloud config get-value project)
+    
+    log "Starting Cloud Run deployment..."
+    log "Project: $PROJECT_ID"
+    log "Region: $REGION"
+    log "Service: $SERVICE_NAME"
+    log "CPU: $CPU core(s)"
+    log "Memory: $MEMORY"
+    
+    validate_prerequisites
+    
+    # Set trap for cleanup
+    trap cleanup EXIT
+    
+    log "Enabling required APIs..."
+    gcloud services enable \
+        cloudbuild.googleapis.com \
+        run.googleapis.com \
+        iam.googleapis.com \
+        --quiet
+    
+    # Clean up any existing directory
+    cleanup
+    
+    log "Cloning repository..."
+    if ! git clone https://github.com/KP-CHANNEL-KP/gcp-vless-2.git; then
+        error "Failed to clone repository"
+        exit 1
+    fi
+    
+    cd gcp-vless-2
+    
+    log "Building container image..."
+    if ! gcloud builds submit --tag gcr.io/${PROJECT_ID}/gcp-vless-2-image --quiet; then
+        error "Build failed"
+        exit 1
+    fi
+    
+    log "Deploying to Cloud Run..."
+    if ! gcloud run deploy ${SERVICE_NAME} \
+        --image gcr.io/${PROJECT_ID}/gcp-vless-2-image \
+        --platform managed \
+        --region ${REGION} \
+        --allow-unauthenticated \
+        --cpu ${CPU} \
+        --memory ${MEMORY} \
+        --quiet; then
+        error "Deployment failed"
+        exit 1
+    fi
+    
+    # Get the service URL
+    SERVICE_URL=$(gcloud run services describe ${SERVICE_NAME} \
+        --region ${REGION} \
+        --format 'value(status.url)' \
+        --quiet)
+
+    DOMAIN=$(echo $SERVICE_URL | sed 's|https://||')
+
+    # 🕒 Start time (MMT)
+START_TIME=$(TZ='Asia/Yangon' date +"%Y-%m-%d %H:%M:%S")
+
+# ⏰ End time = 5 hours from now (MMT)
+END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
+
+    # VLESS link
+    VLESS_LINK="vless://${UUID}@${HOST_DOMAIN}:443?path=%2FKP-CHANNEL&security=tls&alpn=h3%2Ch2%2Chttp%2F1.1&encryption=none&host=${DOMAIN}&fp=randomized&type=ws&sni=${DOMAIN}#${SERVICE_NAME}"
+
+    # ✅ Telegram Message creation 
+MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
+━━━━━━━━━━━━━━━
+\`\`\`
+Server: ${SERVICE_NAME}
+Region: ${REGION}
+Resources: ${CPU} CPU | ${MEMORY} RAM
+Domain: ${DOMAIN}
+
+Start: ${START_TIME}
+End: ${END_TIME}
+\`\`\`
+\`\`\`
+လိုင်းရှယ်ကောင်း
+Singapore Server 🇸🇬🇸🇬🇸🇬
+\`\`\`
+━━━━━━━━━━━━━━━
+*💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ*
+\`\`\`
+${VLESS_LINK}
+\`\`\`
+_အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်_
+\`\`\`Telegram-Channel\`\`\`
+https://t.me/addlist/DaVvvOWfdg05NDJl
+\`\`\`Telegram-Acc\`\`\`
+@KPBYKP
+\`\`\`🕔🕔🕔\`\`\`"
+
+    # ✅ Console Output Message
+    CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
+━━━━━━━━━━━━━━━
+ Project: ${PROJECT_ID}
+ Service: ${SERVICE_NAME}
+ Region: ${REGION}
+ Resources: ${CPU} CPU | ${MEMORY} RAM
+ Domain: ${DOMAIN}
+ 
+ Start Time (MMT): ${START_TIME}
+ End Time (MMT):   ${END_TIME}
+ လိုင်းရှယ်ကောင်း
+ Singapore Server 🇸🇬🇸🇬🇸🇬
+ 
+💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
+${VLESS_LINK}
+━━━━━━━━━━━━━━━
+အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်.
+Telegram-Channel
+https://t.me/addlist/DaVvvOWfdg05NDJl
+Telegram-Acc
+@KPBYKP
+🕔🕔🕔"
+# Save to file
+    echo "$CONSOLE_MESSAGE" > deployment-info.txt
+    log "Deployment info saved to deployment-info.txt"
+    
+    # Display locally
+    echo
+    info "=== Deployment Information ==="
+    echo "$CONSOLE_MESSAGE"
+    echo
+    
+    # Send to Telegram based on user selection
+    if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
+        log "Sending deployment info to Telegram..."
+        send_deployment_notification "$MESSAGE"
+    else
+        log "Skipping Telegram notification as per user selection"
+    fi
+    
+    log "Deployment completed successfully!"
+    log "Service URL: $SERVICE_URL"
+    log "Configuration saved to: deployment-info.txt"
+}
+
+# Run main function
+main "$@"
