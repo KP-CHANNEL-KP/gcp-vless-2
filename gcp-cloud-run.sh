@@ -293,8 +293,20 @@ get_user_input() {
         fi
     done
     
+    # ...
     # UUID
-    local DEFAULT_UUID="9c910024-714e-4221-81c6-41ca9856e7ab"
+    
+    local DEFAULT_UUID
+    
+    # 1. uuidgen command ရှိမရှိ စစ်ဆေးပြီး ရှိရင် အသစ်ထုတ်ပါ၊ မရှိရင် ပုံသေတန်ဖိုးဟောင်းကိုပဲ သုံးပါ
+    if command -v uuidgen &> /dev/null; then
+        DEFAULT_UUID=$(uuidgen)
+    else
+        # uuidgen မရှိရင်တော့ ပုံသေတန်ဖိုးဟောင်းကိုပဲ သုံးရပါမယ်
+        DEFAULT_UUID="9c910024-714e-4221-81c6-41ca9856e7ab"
+        warn "uuidgen command not found. Using the default UUID. Please consider installing 'util-linux'."
+    fi
+
     while true; do
         read -p "Enter UUID [default: ${DEFAULT_UUID}]: " UUID_INPUT
         UUID=${UUID_INPUT:-"$DEFAULT_UUID"}
@@ -302,6 +314,8 @@ get_user_input() {
             break
         fi
     done
+# ...
+
     
     # Telegram Bot Token (required for any Telegram option)
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
