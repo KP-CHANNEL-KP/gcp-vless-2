@@ -298,16 +298,23 @@ get_user_input() {
     
     local DEFAULT_UUID
     
-    # 1. uuidgen command ရှိမရှိ စစ်ဆေးပြီး ရှိရင် အသစ်ထုတ်ပါ၊ မရှိရင် ပုံသေတန်ဖိုးဟောင်းကိုပဲ သုံးပါ
+    # ...
+    local DEFAULT_UUID
+    
+    # uuidgen မရှိရင်တောင် Kernel Interface ကို သုံးပြီး UUID အသစ် ထုတ်ပေးရန်
     if command -v uuidgen &> /dev/null; then
         DEFAULT_UUID=$(uuidgen)
+    elif [[ -f "/proc/sys/kernel/random/uuid" ]]; then
+        DEFAULT_UUID=$(cat /proc/sys/kernel/random/uuid) # ✅ Kernel Interface ကို အသုံးပြု
     else
-        # uuidgen မရှိရင်တော့ ပုံသေတန်ဖိုးဟောင်းကိုပဲ သုံးရပါမယ်
+        # အခြားနည်းလမ်းတွေ ဘာမှမရှိရင်တော့ ပုံသေတန်ဖိုးဟောင်းကိုပဲ သုံးပါ
         DEFAULT_UUID="9c910024-714e-4221-81c6-41ca9856e7ab"
-        warn "uuidgen command not found. Using the default UUID. Please consider installing 'util-linux'."
+        warn "Cannot find 'uuidgen' or access kernel UUID interface. Using the default UUID."
     fi
 
     while true; do
+# ...
+
         read -p "Enter UUID [default: ${DEFAULT_UUID}]: " UUID_INPUT
         UUID=${UUID_INPUT:-"$DEFAULT_UUID"}
         if validate_uuid "$UUID"; then
