@@ -305,7 +305,7 @@ get_user_input() {
     
     # Telegram Bot Token (required for any Telegram option)
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
-        local DEFAULT_BOT_TOKEN="8354809421:AAEXSRRjurPXGJQFhLQLVF-dFCsrZhSsB2g" # Bot Token ပုံသေတန်ဖိုး
+        local DEFAULT_BOT_TOKEN="8318171802:AAGh49s_ysQ-D84Cbht036QaLR1U4uT68RA" # Bot Token ပုံသေတန်ဖိုး
         while true; do
             # Bot Token ကို ဖုံးကွယ်ပြီး default တန်ဖိုးကို အမြည်းပြ
             read -s -p "Enter Telegram Bot Token [default: ${DEFAULT_BOT_TOKEN:0:10}...]: " BOT_TOKEN_INPUT
@@ -562,11 +562,12 @@ END_TIME=$(TZ='Asia/Yangon' date -d "+5 hours" +"%Y-%m-%d %H:%M:%S")
     # ✅ Telegram Message creation 
 MESSAGE=" *KP CHANNEL MYTEL BYPASS GCP*
 ━━━━━━━━━━━━━━━
-\`\`\`Server ${SERVICE_NAME}\`\`\`
-\`\`\`Region ${REGION}\`\`\`
-\`\`\`Resources ${CPU} CPU | ${MEMORY} RAM\`\`\`
-\`\`\`Domain ${DOMAIN}\`\`\`
 \`\`\`
+Server: ${SERVICE_NAME}
+Region: ${REGION}
+Resources: ${CPU} CPU | ${MEMORY} RAM
+Domain: ${DOMAIN}
+
 Start: ${START_TIME}
 End: ${END_TIME}
 \`\`\`
@@ -589,11 +590,12 @@ https://t.me/addlist/DaVvvOWfdg05NDJl
     # ✅ Console Output Message
     CONSOLE_MESSAGE="KP CHANNEL MYTEL BYPASS GCP ✅
 ━━━━━━━━━━━━━━━
- Project ${PROJECT_ID}
- Service ${SERVICE_NAME}
- Region ${REGION}
- Resources ${CPU} CPU | ${MEMORY} RAM
- Domain ${DOMAIN}
+ Project: ${PROJECT_ID}
+ Service: ${SERVICE_NAME}
+ Region: ${REGION}
+ Resources: ${CPU} CPU | ${MEMORY} RAM
+ Domain: ${DOMAIN}
+ 
  Start Time (MMT): ${START_TIME}
  End Time (MMT):   ${END_TIME}
  လိုင်းရှယ်ကောင်း
@@ -601,7 +603,6 @@ https://t.me/addlist/DaVvvOWfdg05NDJl
  
 💛 ထို Key အား အဆင်ပြေတဲ့ Vpn မှာ ထည့်သုံးပါ:
 ${VLESS_LINK}
-
 ━━━━━━━━━━━━━━━
 အသုံးပြုပုံ: Internet သုံးဆွဲ၍မရသော ဒေသများတွင် Mytel ဖြင့် သုံးဆွဲနိုင်သည်.
 Telegram-Channel
