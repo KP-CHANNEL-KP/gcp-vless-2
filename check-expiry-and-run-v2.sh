@@ -10,7 +10,7 @@ MAIN_SCRIPT_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/ref
 # ⚠️ 2. ပြင်ဆင်ရန် - EXPIRY LIST (Key, Date ပါသောဖိုင်) ၏ URL
 # ==========================================================
 # ဒီနေရာမှာ သင့်ရဲ့ user_expiry_list.txt ဖိုင်ကို တင်ထားသော RAW URL ကို ထည့်ပါ။
-EXPIRY_LIST_URL="သင့်ရဲ့ user_expiry_list.txt ဖိုင်ရဲ့ RAW URL ကို ဒီနေရာမှာ အစားထိုးပါ"
+EXPIRY_LIST_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/refs/heads/main/user_expiry_list.txt"
 
 # ----------------------------------------------------------
 
