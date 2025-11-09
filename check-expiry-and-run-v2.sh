@@ -1,16 +1,17 @@
 #!/bin/bash
 
 # ==========================================================
-# ⚠️ 1. ပြင်ဆင်ရန် - MAIN SCRIPT (Logic ပါသောဖိုင်) ၏ URL
+# ⚠️ 1. ပြင်ဆင်ရန် - MAIN SCRIPT (gcp-cloud-run.sh) ၏ URL
 # ==========================================================
-# ဒီနေရာမှာ သင့်ရဲ့ လျှို့ဝှက်ထားချင်တဲ့ gcp-cloud-run.sh ဖိုင်ရဲ့ RAW URL ကို ထည့်ပါ။
-MAIN_SCRIPT_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/refs/heads/main/gcp-cloud-run.sh"
+# URL ကို ရိုးရှင်းသော main branch ပုံစံသို့ ပြောင်းထားသည်
+MAIN_SCRIPT_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/main/gcp-cloud-run.sh"
 
 # ==========================================================
-# ⚠️ 2. ပြင်ဆင်ရန် - EXPIRY LIST (Key, Date ပါသောဖိုင်) ၏ URL
+# ⚠️ 2. ပြင်ဆင်ရန် - EXPIRY LIST (user_expiry_list.txt) ၏ URL
 # ==========================================================
-# ဒီနေရာမှာ သင့်ရဲ့ user_expiry_list.txt ဖိုင်ကို တင်ထားသော RAW URL ကို ထည့်ပါ။
-EXPIRY_LIST_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/refs/heads/main/user_expiry_list.txt"
+# ဒီနေရာကို သင့်ရဲ့ user_expiry_list.txt ဖိုင်ရဲ့ RAW URL နဲ့ အစားထိုးပါ
+EXPIRY_LIST_URL="https://raw.githubusercontent.com/KP-CHANNEL-KP/gcp-vless-2/main/user_expiry_list.txt" 
+# (အကယ်၍ သင့်ဖိုင်က gist မှာ ရှိပါက URL ကို ပြောင်းလဲပေးပါ။)
 
 # ----------------------------------------------------------
 
@@ -27,7 +28,7 @@ fi
 echo "--- VLESS Deployment Script Loader ---"
 
 # 2. Online စာရင်းမှ သက်ဆိုင်ရာ Expiry Date ကို ရှာဖွေခြင်း
-# (သင့်ရဲ့ list ပုံစံ user_expiry_list.txt ပေါ်မူတည်ပြီး awk command ပြောင်းလဲနိုင်သည်)
+# စာရင်းဖိုင်ကို ယူ၊ Key ကို ရှာ (grep -w: exact match အတွက်)၊ Date ကို ယူ (awk)
 EXPIRY_DATE=$(curl -Ls $EXPIRY_LIST_URL | grep -w "$USER_KEY" | awk '{print $2}')
 
 # Key ကို စာရင်းထဲတွင် မတွေ့လျှင် Error ပြရန်
@@ -44,13 +45,8 @@ echo "📅 လက်ရှိနေ့စွဲ: $CURRENT_DATE"
 echo "🛑 စာရင်းရှိ သက်တမ်းကုန်ဆုံးမည့်ရက်: $EXPIRY_DATE"
 echo "--------------------------------------"
 
-# 4. ရက်စွဲများကို စက္ကန့် (Timestamp) ပုံစံသို့ ပြောင်းပြီး နှိုင်းယှဉ်စစ်ဆေးခြင်း
-# ၎င်းသည် string ဖြင့် နှိုင်းယှဉ်ခြင်းထက် ပိုမိုတိကျသော နည်းလမ်းဖြစ်သည်။
-CURRENT_SEC=$(date -d "$CURRENT_DATE" +%s)
-EXPIRY_SEC=$(date -d "$EXPIRY_DATE" +%s)
-
-# လက်ရှိ စက္ကန့်အရေအတွက်သည် ကုန်ဆုံးရက်၏ စက္ကန့်အရေအတွက်ထက် ကြီးနေပါက (ကျော်လွန်နေပါက)
-if [ "$CURRENT_SEC" -gt "$EXPIRY_SEC" ]; then
+# 4. ရက်စွဲ နှိုင်းယှဉ်စစ်ဆေးခြင်း (Cloud Shell နှင့် အသင့်တော်ဆုံး String Comparison)
+if [[ "$CURRENT_DATE" > "$EXPIRY_DATE" ]]; then
     
     # ❌ သက်တမ်းကုန်ဆုံးသွားလျှင်
     echo "🚨 ACCESS DENIED: သုံးစွဲခွင့်သက်တမ်း ($EXPIRY_DATE) ကုန်ဆုံးသွားပါပြီ။"
@@ -62,6 +58,7 @@ else
     echo "🎉 သုံးစွဲခွင့်ရှိပါသေးသည်။ မူရင်း Deployment Script ကို ခေါ်ယူပြီး လုပ်ဆောင်ပါမည်..."
     
     # curl ဖြင့် မူရင်း script ကို ရယူပြီး bash ဖြင့် run ခြင်း
+    # Cloud Shell မှာ အလုပ်လုပ်ကြောင်း အတည်ပြုပြီးသား ဖြစ်သည့် ပုံစံဖြင့် ခေါ်ယူသည်။
     bash <(curl -Ls $MAIN_SCRIPT_URL)
     
     echo "--------------------------------------"
