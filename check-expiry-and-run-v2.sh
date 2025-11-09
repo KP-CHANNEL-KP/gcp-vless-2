@@ -27,7 +27,7 @@ fi
 echo "--- VLESS Deployment Script Loader ---"
 
 # 2. Online စာရင်းမှ သက်ဆိုင်ရာ Expiry Date ကို ရှာဖွေခြင်း
-# curl ဖြင့် စာရင်းကို ဆွဲယူပြီး၊ grep ဖြင့် Key ကို စစ်ကာ၊ awk ဖြင့် Date (ဒုတိယမြောက် field) ကို ရယူသည်။
+# (သင့်ရဲ့ list ပုံစံ user_expiry_list.txt ပေါ်မူတည်ပြီး awk command ပြောင်းလဲနိုင်သည်)
 EXPIRY_DATE=$(curl -Ls $EXPIRY_LIST_URL | grep -w "$USER_KEY" | awk '{print $2}')
 
 # Key ကို စာရင်းထဲတွင် မတွေ့လျှင် Error ပြရန်
@@ -44,8 +44,13 @@ echo "📅 လက်ရှိနေ့စွဲ: $CURRENT_DATE"
 echo "🛑 စာရင်းရှိ သက်တမ်းကုန်ဆုံးမည့်ရက်: $EXPIRY_DATE"
 echo "--------------------------------------"
 
-# 4. ရက်စွဲ နှိုင်းယှဉ်စစ်ဆေးခြင်း
-if [[ "$CURRENT_DATE" > "$EXPIRY_DATE" ]]; then
+# 4. ရက်စွဲများကို စက္ကန့် (Timestamp) ပုံစံသို့ ပြောင်းပြီး နှိုင်းယှဉ်စစ်ဆေးခြင်း
+# ၎င်းသည် string ဖြင့် နှိုင်းယှဉ်ခြင်းထက် ပိုမိုတိကျသော နည်းလမ်းဖြစ်သည်။
+CURRENT_SEC=$(date -d "$CURRENT_DATE" +%s)
+EXPIRY_SEC=$(date -d "$EXPIRY_DATE" +%s)
+
+# လက်ရှိ စက္ကန့်အရေအတွက်သည် ကုန်ဆုံးရက်၏ စက္ကန့်အရေအတွက်ထက် ကြီးနေပါက (ကျော်လွန်နေပါက)
+if [ "$CURRENT_SEC" -gt "$EXPIRY_SEC" ]; then
     
     # ❌ သက်တမ်းကုန်ဆုံးသွားလျှင်
     echo "🚨 ACCESS DENIED: သုံးစွဲခွင့်သက်တမ်း ($EXPIRY_DATE) ကုန်ဆုံးသွားပါပြီ။"
