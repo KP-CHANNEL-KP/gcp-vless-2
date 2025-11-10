@@ -25,17 +25,12 @@ fi
 
 # ----------------------------------------------------------------------
 # 2. လက်ရှိအချိန်ကို Myanmar Time (MMT) ဖြင့် Unix Timestamp (စက္ကန့်) ယူခြင်း
-# (ယနေ့ မြန်မာပြည် အချိန် ဘယ်လောက်ရှိပြီလဲ)
-# Timezone ကို Asia/Yangon ဖြင့် သတ်မှတ်ပါသည်။
 CURRENT_TIMESTAMP=$(TZ="Asia/Yangon" date +%s)
 # ----------------------------------------------------------------------
 
 
 # ----------------------------------------------------------------------
 # 3. EXPIRY DATE ကို Singapore Time (SGT) ဖြင့် Unix Timestamp ယူခြင်း
-# သက်တမ်းကုန်ဆုံးရက်ရဲ့ ည ၁၁:၅၉:၅၉ (Singapore Time) အဖြစ် သတ်မှတ်သည်။
-# Timezone ကို Asia/Singapore ဖြင့် သတ်မှတ်ပါသည်။
-# ဥပမာ: 2025-11-10 SGT 23:59:59 (MMT 11 ရက်နေ့ ညသန်းခေါင်ကျော်သွားသည်)
 EXPIRY_TIMESTAMP=$(TZ="Asia/Singapore" date -d "$EXPIRY_DATE_STR 23:59:59" +%s 2>/dev/null)
 # ----------------------------------------------------------------------
 
@@ -45,15 +40,24 @@ if [ $? -ne 0 ] || [ -z "$EXPIRY_TIMESTAMP" ]; then
     exit 1
 fi
 
+# ----------------------------------------------------------------------
+# 4. TIMESTAMP များကို လူဖတ်နိုင်သော စာသားအဖြစ် ပြန်ပြောင်းလဲခြင်း (Display Info အတွက်)
+# ----------------------------------------------------------------------
+# MMT ဖြင့် လက်ရှိနေ့စွဲ၊ အချိန်နှင့် Timezone ကို ဖော်ပြခြင်း
+CURRENT_DATE_MMT=$(TZ="Asia/Yangon" date -d "@$CURRENT_TIMESTAMP" +"%Y-%m-%d %H:%M:%S MMT")
+
+# SGT ဖြင့် သက်တမ်းကုန်ဆုံးမည့် အချိန်နှင့် Timezone ကို ဖော်ပြခြင်း
+EXPIRY_DATE_SGT=$(TZ="Asia/Singapore" date -d "@$EXPIRY_TIMESTAMP" +"%Y-%m-%d %H:%M:%S SGT")
+
+
 # အချက်အလက်ပြသခြင်း (Display Info)
 echo "🔑 Key: $USER_KEY"
-echo "🇲🇲 Current Time Stamp (MMT): $CURRENT_TIMESTAMP"
-echo "🇸🇬 Exp Time Stamp (SGT End of Day): $EXPIRY_TIMESTAMP"
+echo "🕒 Current Time: $CURRENT_DATE_MMT"
+echo "🛑 Expire On:    $EXPIRY_DATE_SGT"
 echo "--------------------------------------"
 
 
-# 4. နှိုင်းယှဉ်ခြင်း: MMT လက်ရှိအချိန်က SGT Expiry Time ထက် ပိုကြီးနေပြီဆိုရင် Block
-# (ဆိုလိုသည်မှာ SGT ဖြင့် သတ်မှတ်ထားသော သက်တမ်းကုန်ဆုံးချိန် ကျော်လွန်သွားပြီ)
+# 5. နှိုင်းယှဉ်ခြင်း (Logic သည် အရင်အတိုင်း တိကျမှု ရှိနေသည်)
 if [[ "$CURRENT_TIMESTAMP" -gt "$EXPIRY_TIMESTAMP" ]]; then
     
     
