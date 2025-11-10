@@ -30,7 +30,7 @@ CURRENT_TIMESTAMP=$(TZ="Asia/Yangon" date +%s)
 
 
 # ----------------------------------------------------------------------
-# 3. EXPIRY DATE ကို Singapore Time (SGT) ဖြင့် Unix Timestamp ယူခြင်း
+# 3. EXPIRY DATE ကို Singapore Time (SGT) ဖြင့် Unix Timestamp ယူခြင်း (23:59:59 SGT)
 EXPIRY_TIMESTAMP=$(TZ="Asia/Singapore" date -d "$EXPIRY_DATE_STR 23:59:59" +%s 2>/dev/null)
 # ----------------------------------------------------------------------
 
