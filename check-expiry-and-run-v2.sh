@@ -18,27 +18,43 @@ fi
 echo "--- VLESS Deployment Script Loader ---"
 
 
-EXPIRY_DATE=$(curl -Ls $EXPIRY_LIST_URL | grep -w "$USER_KEY" | awk '{print $2}')
+# 1. EXPIRY DATE ကို ဆွဲယူခြင်း
+EXPIRY_DATE_STR=$(curl -Ls $EXPIRY_LIST_URL | grep -w "$USER_KEY" | awk '{print $2}')
 
 
-if [ -z "$EXPIRY_DATE" ]; then
+if [ -z "$EXPIRY_DATE_STR" ]; then
     echo "🚨 ERROR: The specified key ($USER_KEY) is not in the access list."
     exit 1
 fi
 
 
-CURRENT_DATE=$(date +%Y-%m-%d)
+# 2. လက်ရှိရက်စွဲ နှင့် သက်တမ်းကုန်ဆုံးရက် တို့ကို Unix Timestamp (စက္ကန့်) အဖြစ် ပြောင်းလဲခြင်း
+
+# လက်ရှိ စက္ကန့် (Today's Timestamp)
+CURRENT_TIMESTAMP=$(date +%s)
+
+# EXPIRY DATE ကို ည ၁၁:၅၉:၅၉ အဖြစ် သတ်မှတ်ခြင်း (End of Day) 
+# ဒါမှသာ အဲဒီရက်ရဲ့ ညသန်းခေါင်ယံမှာ တိကျစွာ သက်တမ်းကုန်ဆုံးမယ်
+EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE_STR 23:59:59" +%s 2>/dev/null)
+
+# date -d command က Error ဖြစ်ခဲ့ရင် (e.g. မမှန်ကန်တဲ့ format ဆိုရင်) 
+if [ $? -ne 0 ] || [ -z "$EXPIRY_TIMESTAMP" ]; then
+    echo "🚨 CONFIGURATION ERROR: Invalid date format found for key $USER_KEY ($EXPIRY_DATE_STR)."
+    exit 1
+fi
 
 echo "🔑 Key: $USER_KEY"
-echo "📅 To Day: $CURRENT_DATE"
-echo "🛑 Exp Date: $EXPIRY_DATE"
+echo "📅 Current Time Stamp: $CURRENT_TIMESTAMP"
+echo "🛑 Exp Time Stamp: $EXPIRY_TIMESTAMP"
 echo "--------------------------------------"
 
 
-if [[ "$CURRENT_DATE" > "$EXPIRY_DATE" ]]; then
+# 3. Timestamp နှိုင်းယှဉ်ခြင်း
+# လက်ရှိအချိန်က သက်တမ်းကုန်ဆုံးချိန်ထက် ပိုများနေပြီဆိုရင် Block
+if [[ "$CURRENT_TIMESTAMP" -gt "$EXPIRY_TIMESTAMP" ]]; then
     
     
-    echo "🚨 ACCESS DENIED: Access has expired ($EXPIRY_DATE)."
+    echo "🚨 ACCESS DENIED: Access has expired ($EXPIRY_DATE_STR)."
     exit 1
 
 else
