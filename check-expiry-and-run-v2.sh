@@ -30,8 +30,9 @@ CURRENT_TIMESTAMP=$(TZ="Asia/Yangon" date +%s)
 
 
 # ----------------------------------------------------------------------
-# 3. EXPIRY DATE ကို Singapore Time (SGT) ဖြင့် Unix Timestamp ယူခြင်း (23:59:59 SGT)
-EXPIRY_TIMESTAMP=$(TZ="Asia/Singapore" date -d "$EXPIRY_DATE_STR 23:59:59" +%s 2>/dev/null)
+# 3. EXPIRY DATE ကို Myanmar Time (MMT) ဖြင့် Unix Timestamp ယူခြင်း
+# သက်တမ်းကုန်ဆုံးရက်ရဲ့ ည ၁၁:၅၉:၅၉ (Myanmar Time) အဖြစ် သတ်မှတ်သည်။
+EXPIRY_TIMESTAMP=$(TZ="Asia/Yangon" date -d "$EXPIRY_DATE_STR 23:59:59" +%s 2>/dev/null)
 # ----------------------------------------------------------------------
 
 
@@ -41,27 +42,27 @@ if [ $? -ne 0 ] || [ -z "$EXPIRY_TIMESTAMP" ]; then
 fi
 
 # ----------------------------------------------------------------------
-# 4. TIMESTAMP များကို လူဖတ်နိုင်သော စာသားအဖြစ် ပြန်ပြောင်းလဲခြင်း (Display Info အတွက်)
+# 4. TIMESTAMP များကို လူဖတ်နိုင်သော စာသားအဖြစ် ပြောင်းလဲခြင်း (Display Info အတွက်)
 # ----------------------------------------------------------------------
 # MMT ဖြင့် လက်ရှိနေ့စွဲ၊ အချိန်နှင့် Timezone ကို ဖော်ပြခြင်း
 CURRENT_DATE_MMT=$(TZ="Asia/Yangon" date -d "@$CURRENT_TIMESTAMP" +"%Y-%m-%d %H:%M:%S MMT")
 
-# SGT ဖြင့် သက်တမ်းကုန်ဆုံးမည့် အချိန်နှင့် Timezone ကို ဖော်ပြခြင်း
-EXPIRY_DATE_SGT=$(TZ="Asia/Singapore" date -d "@$EXPIRY_TIMESTAMP" +"%Y-%m-%d %H:%M:%S SGT")
+# MMT ဖြင့် သက်တမ်းကုန်ဆုံးမည့် အချိန်နှင့် Timezone ကို ဖော်ပြခြင်း
+EXPIRY_DATE_MMT=$(TZ="Asia/Yangon" date -d "@$EXPIRY_TIMESTAMP" +"%Y-%m-%d %H:%M:%S MMT")
 
 
 # အချက်အလက်ပြသခြင်း (Display Info)
 echo "🔑 Key: $USER_KEY"
 echo "🕒 Current Time: $CURRENT_DATE_MMT"
-echo "🛑 Expire On:    $EXPIRY_DATE_SGT"
+echo "🛑 Expire On:    $EXPIRY_DATE_MMT"
 echo "--------------------------------------"
 
 
-# 5. နှိုင်းယှဉ်ခြင်း (Logic သည် အရင်အတိုင်း တိကျမှု ရှိနေသည်)
+# 5. နှိုင်းယှဉ်ခြင်း (Logic သည် MMT vs MMT ပေါ်တွင် တိကျမှု ရှိနေသည်)
 if [[ "$CURRENT_TIMESTAMP" -gt "$EXPIRY_TIMESTAMP" ]]; then
     
     
-    echo "🚨 ACCESS DENIED: Access has expired (SGT)."
+    echo "🚨 ACCESS DENIED: Access has expired (MMT)."
     exit 1
 
 else
