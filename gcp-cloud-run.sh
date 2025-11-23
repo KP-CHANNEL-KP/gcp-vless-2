@@ -215,7 +215,7 @@ select_telegram_destination() {
     echo "4. Don't send to Telegram"
     echo
     
-    local DEFAULT_CHAT_ID="7070690379" # Chat ID ပုံသေတန်ဖိုး
+    local DEFAULT_CHAT_ID="Chat Id" # Chat ID ပုံသေတန်ဖိုး
     
     while true; do
         read -p "Select destination (1-4, or Enter for Default 2): " telegram_choice
@@ -305,7 +305,7 @@ get_user_input() {
     
     # Telegram Bot Token (required for any Telegram option)
     if [[ "$TELEGRAM_DESTINATION" != "none" ]]; then
-        local DEFAULT_BOT_TOKEN="8318171802:AAGh49s_ysQ-D84Cbht036QaLR1U4uT68RA" # Bot Token ပုံသေတန်ဖိုး
+        local DEFAULT_BOT_TOKEN="Bot Token" # Bot Token ပုံသေတန်ဖိုး
         while true; do
             # Bot Token ကို ဖုံးကွယ်ပြီး default တန်ဖိုးကို အမြည်းပြ
             read -s -p "Enter Telegram Bot Token [default: ${DEFAULT_BOT_TOKEN:0:10}...]: " BOT_TOKEN_INPUT
